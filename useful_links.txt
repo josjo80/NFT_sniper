@@ -1,0 +1,41 @@
+OpenSea Data Mining
+https://github.com/adilmoujahid/data-mining-nfts/blob/main/data-mining-meebits-nfts.ipynb
+
+Rarity Score Methods:
+https://raritytools.medium.com/ranking-rarity-understanding-rarity-calculation-methods-86ceaeb9b98c 
+
+Statistical Rarity:
+https://achekroud.substack.com/p/d8f13e0a-ae26-40e4-bff2-beacb2916ff0 
+
+Python Rarity Calc: (rarity.tools inverse method)
+https://jwinterm.com/posts/raritycalc/
+https://github.com/patrn-me/rarity-calc
+
+# If you did not have access to a master json file containing all items in the collection, 
+# then you could get the “base_uri” from the smart contract and write a loop to download all
+# of the data for each item individually from ipfs.
+
+Rarity Analyzer:
+https://github.com/mikko-o/rarity-analyser 
+
+Build Rarity Ranking Site:
+https://www.youtube.com/watch?v=TXpfRRHwjak
+
+OpenSea NFT Metadata standards:
+https://docs.opensea.io/docs/metadata-standards
+ 
+
+IPFS:
+https://hackernoon.com/a-beginners-guide-to-ipfs-20673fedd3f
+https://docs.ipfs.io/how-to/mint-nfts-with-ipfs/#a-short-introduction-to-nfts
+
+Pinata:
+https://app.pinata.cloud/register
+https://app.pinata.cloud/signin
+
+OpenSea API doc:
+https://docs.opensea.io/reference/api-overview
+https://docs.opensea.io/reference/request-an-api-key
+
+Finding NFTs On IPFS:
+https://medium.com/coinmonks/how-to-find-your-nft-on-ipfs-e51bc5e7c8a1
