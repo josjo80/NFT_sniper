@@ -1,0 +1,26 @@
+"""
+# Find old SOLD listings -> Gather historical data (ETH price at listing)
+# Gather ETH price at listing, ETH price at SALE, Floor price at listing, NFT traits
+Training Data will include:
+
+- Floor price
+- Bid/ask history?
+- Final SALE price (in ETH)
+
+"""
+
+
+# Questions to answer:
+- How (what method) will we calculate NFT Rarity? (Statistical, Inverse, etc.)
+- What will dataset look like? (Time-series or stationary)
+    + Traits
+        ~ Feature vector of length `n`, where `n` is the number of traits
+    + ETH price (at time of sale)
+        ~ Scalar
+
+# Overall Procedure
+1a) Pick NFT project with sufficient Liquidity using Rarity.tools or other aggregator
+1b) Collect & Create training curated dataset for specific NFT projects
+2a) Train the model and evaluate loop
+2b) Identify mispriced NFTs inside project by inferencing forward (time-series model?)
+3) Buy and Flip 'em.
