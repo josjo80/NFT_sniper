@@ -32,3 +32,11 @@ b = set(vl['Collection'])
 olp = a.intersection(b)
 
 print("Projects to investigate:", olp)
+
+high_liq_projects = ['Axie Origins',
+ 'Bored Ape YC',
+ 'CLONE X - X TAKASHI MURAKAMI',
+ 'Cool Cats NFT',
+ 'CryptoPunks',
+ 'Mutant Ape Yacht Club',
+ 'World of Women']

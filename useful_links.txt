@@ -33,3 +33,9 @@ Pinata:
 https://app.pinata.cloud/register
 https://app.pinata.cloud/signin
 
+OpenSea API doc:
+https://docs.opensea.io/reference/api-overview
+https://docs.opensea.io/reference/request-an-api-key
+
+Finding NFTs On IPFS:
+https://medium.com/coinmonks/how-to-find-your-nft-on-ipfs-e51bc5e7c8a1
