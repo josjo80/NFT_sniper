@@ -1,7 +1,7 @@
 import pandas as pd
 from selenium import webdriver
 
-inp = 'stgeorge' # input("Enter windows username: ")
+inp = input("Enter windows username: ") # stgeorge
 exe_path = r"C:\Users\{}\Downloads\geckodriver-v0.30.0-win64\geckodriver.exe".format(inp)
 html = "https://rarity.tools" # input("Enter HTML address:\n ") 
 outpath = "./rarity_df.pickle"
