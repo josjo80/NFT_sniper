@@ -162,9 +162,18 @@ PDF = PUDGY_RAW_DF = jload(PUDGY_RAW_DATA_PATH)
 
 # One hot data
 PUDGY_ONEHOT_PATH = os.path.join(DATA_DIR, "pudgy_onehot.npz")
-PUDGY_ONEHOT = loadz(PUDGY_ONEHOT_PATH)
+POH = PUDGY_ONEHOT = loadz(PUDGY_ONEHOT_PATH)
 
 # Rarity data
 ADF = ALL_RARITY_DF = unpickle(os.path.join(DATA_DIR, "all_rarity_df.pickle"))
 PUDGY_RARITY_PATH = os.path.join(DATA_DIR, "pudgypenguins.xlsx")
 RDF = PUDGY_RARITY_DF = pd.read_excel(PUDGY_RARITY_PATH)
+
+# TODO: Training data
+ts = traits = POH
+rs = rarity_scores = RDF['Rarity score']
+rsn = rarity_scores_norm = RDF['Rarity score normed']
+
+# NEED TRANSACTION HISTORY!
+# TIMESERIES MODEL
+# OPENSEA API?

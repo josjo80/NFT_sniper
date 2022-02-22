@@ -80,7 +80,7 @@ class Item:
 
 
 # Loop over the json file and add items to collection and count them
-input_file = '../NFT_sniper/data/pudgypenguins_data_raw'
+input_file = './data/pudgypenguins_data_raw'
 x = json.load(open(input_file, 'r'))
 data = x['pudgypenguins']
 md = data['project_metadata']

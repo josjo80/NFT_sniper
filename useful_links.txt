@@ -24,7 +24,6 @@ https://www.youtube.com/watch?v=TXpfRRHwjak
 OpenSea NFT Metadata standards:
 https://docs.opensea.io/docs/metadata-standards
  
-
 IPFS:
 https://hackernoon.com/a-beginners-guide-to-ipfs-20673fedd3f
 https://docs.ipfs.io/how-to/mint-nfts-with-ipfs/#a-short-introduction-to-nfts
@@ -42,3 +41,6 @@ https://medium.com/coinmonks/how-to-find-your-nft-on-ipfs-e51bc5e7c8a1
 
 NFTGO Rarity Calculation Model (Dec 2021)
 https://nftgo.medium.com/the-ultimate-guide-to-nftgos-new-rarity-model-3f2265dd0e23
+
+Etherscan API:
+https://api.etherscan.io/apis
