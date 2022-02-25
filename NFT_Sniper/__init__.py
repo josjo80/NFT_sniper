@@ -3,6 +3,7 @@ import time
 from collections import Counter
 import yaml
 import scipy
+import json
 import pickle
 import shutil
 import numpy as np
@@ -11,6 +12,8 @@ from sys import platform
 from pprint import pprint
 import matplotlib
 import matplotlib.pyplot as plt
+from datetime import datetime
+from functools import reduce
 
 matplotlib.use('agg')
 getwd = os.getcwd
@@ -22,7 +25,11 @@ def setwd(path):
 
 MB = 1024 * 1024
 
+
+reduce_df = lambda dfs: reduce(lambda df1, df2: df1.merge(df2, how='outer'), dfs)
+
 gpus = nvidia = nvidia_smi = lambda: os.system('nvidia-smi')
+
 
 def set_cuda_devices(i=""):
     """Set one or more GPUs to use for training by index or all by default
@@ -148,12 +155,18 @@ def loadz(fp, key='arr_0'):
         return x[key]
     return {k: v for k,v in x.items() if k in keys}
 
-# Local Imports
+# # Local Imports
 from .utils import *
+from .get_contract_data import *
 
 # Set constants
 from tensorflow import random
 random.set_seed(FLAGS.get('random_seed', 1337))
+
+ETHERSCAN_API_KEY = "QXN3NDNXICBFTB1TEHZVZB6EYSXBZMUIP9"
+CONTRACT_ADDRESS  = "0xbd3531da5cf5857e7cfaa92426877b022e612cf8" # PudgyPenguins
+GENESIS_TIMESTAMP = "2021-07-22"
+
 
 # Load raw data
 DATA_DIR = "./data"
@@ -169,11 +182,35 @@ ADF = ALL_RARITY_DF = unpickle(os.path.join(DATA_DIR, "all_rarity_df.pickle"))
 PUDGY_RARITY_PATH = os.path.join(DATA_DIR, "pudgypenguins.xlsx")
 RDF = PUDGY_RARITY_DF = pd.read_excel(PUDGY_RARITY_PATH)
 
-# TODO: Training data
-ts = traits = POH
-rs = rarity_scores = RDF['Rarity score']
-rsn = rarity_scores_norm = RDF['Rarity score normed']
+# Transaction data (Pandas DataFrame)
+ADF = pd.read_pickle(os.path.join(DATA_DIR, 'pudgy-first-10000-txs'))
 
-# NEED TRANSACTION HISTORY!
-# TIMESERIES MODEL
-# OPENSEA API?
+ETH_HIST = pd.read_csv(os.path.join(DATA_DIR, "ETH-USD-History.csv"))
+
+##############################################################
+path = os.path.join(DATA_DIR, 'pudgy-txs')
+files = list(
+    map(
+        lambda x: os.path.join(path, x), 
+        os.listdir(path)
+    )
+)
+dfs = list(map(lambda x: pd.read_csv(x), files))
+df = reduce_df(dfs)
+del path, dfs, files
+
+# Normalized ETH PRICE
+def get_eth_mint_price(timestamp):
+    unix_time = int(timestamp)
+    mint_date = datetime.utcfromtimestamp(unix_time).strftime('%Y-%m-%d %H:%M:%S')
+    dt = datetime.strptime(mint_date, '%Y-%m-%d %H:%M:%S')
+    ETH_MINT_PRICE = ETH_HIST.iloc[logical2idx(ETH_HIST['Date'] == mint_date[:-9])[0]]
+
+def get_eth_price_at(date):
+    """
+    Fetch etherum historical price on a specific day
+    date: str e.g. "07-22-2021" format("%Y%m%d%")
+    """
+    eth_date_str = datetime.utcfromtimestamp(unix_time).strftime('%Y-%m-%d %H:%M:%S')
+    eth_datetime = datetime.strptime(mint_date, '%Y-%m-%d %H:%M:%S')
+    ETH_HIST.iloc[logical2idx()]

@@ -55,8 +55,57 @@ with open('./data/pudgyonehot.npz', 'wb') as f:
 # EXPERIMENTING...
 #########################################################################################
 
-# INPUT:  ETH_PRICE, ONEHOT_TRAITS, IMAGE_DATA (?)
-# OUTPUT: NFT PRICE
+path = './data/pudgy-txs'
+files = list(map(lambda x: os.path.join(path, x), os.listdir(path)))
+dfs = list(map(lambda x: pd.read_csv(x), files))
+
+from functools import reduce
+reduce_df = lambda dfs: reduce(lambda df1, df2: df1.merge(df2, how='outer'), dfs)
+
+df = reduce_df(dfs)
+hashes = df['Txhash']
+txs_by_hash = []
+for h in hashes:
+    tx = get_tx_by_hash(h)
+    txs_by_hash.append(tx)
+    print(tx)
+    break
+
+ptxs = []
+for i in range(10):
+    ptx = get_paginated_txs(page=i, offset=5000)
+    ptxs.append(ptx)
+    print("-----------------")
+    print(i)
+    print("-----------------")
+
+d0 = pd.DataFrame(ptxs[0]) # first 10000
+d1 = pd.DataFrame(ptxs[1]) # 0:100
+d2 = pd.DataFrame(ptxs[2]) # 100:200
+d3 = pd.DataFrame(ptxs[3]) # 200:300
+d4 = pd.DataFrame(ptxs[4]) # 300:400
+
+a = d0.iloc[200:300].reset_index().drop(columns='index')
+b = d3.reset_index().drop(columns='index')
+print(all(a['hash']==b['hash']))
+
+for 
+
+ordered = lambda x: inorder(x['timeStamp'].astype(int))
+
+import math
+def inorder(x, asc=True):
+    i = 1
+    x[len(x)] = -math.inf
+    if asc:
+        while x[i-1] <= x[i]: i += 1
+    else:
+        while x[i-1] >= x[i]: i += 1
+    del x[len(x)-1]
+    return True if i == len(x) else False
+
+# INPUT:  CURRENT_ETH_PRICE, ONEHOT_TRAITS, LIST_PRICE
+# OUTPUT: EXPECTED_SALE_PRICE
 
 # NOTE: Should we use hierarchical labels for traits? - are they standardized across projects?
 tt = trait_tally = {}
@@ -85,3 +134,10 @@ df = pd.DataFrame.from_dict(nfts, orient='index')
 # Sale Price: 1.08 ETH (2986.54 USD)
 # Timestamp: 10:31:12-02-19-2022 (e.g.)
 # some way to construct train-val splits. -> 
+
+
+#ETHERSCAN PUDGYPENGUIN CONTRACT
+# https://etherscan.io/address/0xbd3531da5cf5857e7cfaa92426877b022e612cf8
+
+#ETHERSCAN PUDGYPENGUIN TOKEN
+# https://etherscan.io/token/0xbd3531da5cf5857e7cfaa92426877b022e612cf8
