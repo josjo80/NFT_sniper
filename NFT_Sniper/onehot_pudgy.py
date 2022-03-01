@@ -28,25 +28,26 @@ def decode_traits(t):
     i = logical2idx(t.astype(bool))
     return TRAITS_LIST[i]
 
-x = json.load(open('./data/pudgypenguins_data_raw', 'r'))
-md = x['pudgypenguins']['project_metadata']['collection']
-sts = md['stats']
-nfts = x['pudgypenguins']['nfts']
-a = asset_link = md['image_url']
-all_traits = md['traits']
+def process_raw_pudgy_data(raw_data_path='./data/pudgypenguins_data_raw'):
+    x = json.load(open(raw_data_path, 'r'))
+    md = x['pudgypenguins']['project_metadata']['collection']
+    sts = md['stats']
+    nfts = x['pudgypenguins']['nfts']
+    a = asset_link = md['image_url']
+    all_traits = md['traits']
 
-TRAITS = set(sorted(flatten_traits(all_traits)))
-TRAITS_LIST = np.asarray(list(TRAITS))
-N_TRAITS = len(TRAITS)
-TRAIT_SUPERCLASSES = set(all_traits)
-TRAIT2IDX = dict(zip(TRAITS, range(N_TRAITS)))
-IDX2TRAIT = dict(zip(range(N_TRAITS), TRAITS))
+    TRAITS = set(sorted(flatten_traits(all_traits)))
+    TRAITS_LIST = np.asarray(list(TRAITS))
+    N_TRAITS = len(TRAITS)
+    TRAIT_SUPERCLASSES = set(all_traits)
+    TRAIT2IDX = dict(zip(TRAITS, range(N_TRAITS)))
+    IDX2TRAIT = dict(zip(range(N_TRAITS), TRAITS))
 
-#preallocate
-X = np.zeros((len(nfts), N_TRAITS))
-for i, (nm, nft) in enumerate(nfts.items()):
-    X[i] = encode_traits(nft['attributes'])
+    #preallocate
+    X = np.zeros((len(nfts), N_TRAITS))
+    for i, (nm, nft) in enumerate(nfts.items()):
+        X[i] = encode_traits(nft['attributes'])
 
-# save one hot vector
-with open('./data/pudgy_onehot.npz', 'wb') as f:
-    np.savez(f, X) # penguin indexed by range(0, 8887)
+    # save one hot vector
+    with open('./data/pudgy_onehot.npz', 'wb') as f:
+        np.savez(f, X) # penguin indexed by range(0, 8887)

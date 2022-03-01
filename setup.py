@@ -27,7 +27,7 @@ else:
 setup(name='NFT_Sniper',
       version='0.0.1',
       description='Identify Mispriced NFTs',
-      author='Jason St George',
+      author='Josh Johnson, Jason St George',
       author_email='stgeorgejas@gmail.com',
       packages=find_packages(),
       install_requires=deps)

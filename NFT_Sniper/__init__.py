@@ -118,99 +118,53 @@ else:
     except:
         print("Could not configure GPU devices for tensorflow...")
 
-def is_numpy(x):
-    return x.__class__ in [
-        np.ndarray,
-        np.rec.recarray,
-        np.char.chararray,
-        np.ma.masked_array
-    ]
-
-def is_scalar(x):
-    if is_numpy(x):
-        return x.ndim == 0
-    if isinstance(x, str) or type(x) == bytes:
-        return True
-    if hasattr(x, "__len__"):
-        return len(x) == 1
-    try:
-        x = iter(x)
-    except:
-        return True
-    return np.asarray(x).ndim == 0
-
-def unpickle(fp):
-    with open(fp, 'rb') as f:
-        x = pickle.load(f)
-    return x
-
-def jload(fp):
-    with open(fp, 'rb') as f:
-        x = json.load(f)
-    return x
-
-def loadz(fp, key='arr_0'):
-    x = np.load(fp, allow_pickle=True)
-    if is_scalar(key):
-        return x[key]
-    return {k: v for k,v in x.items() if k in keys}
 
 # # Local Imports
 from .utils import *
-from .get_contract_data import *
+from .contract_data import *
 
 # Set constants
-from tensorflow import random
-random.set_seed(FLAGS.get('random_seed', 1337))
-
 ETHERSCAN_API_KEY = "QXN3NDNXICBFTB1TEHZVZB6EYSXBZMUIP9"
 CONTRACT_ADDRESS  = "0xbd3531da5cf5857e7cfaa92426877b022e612cf8" # PudgyPenguins
-GENESIS_TIMESTAMP = "2021-07-22"
-
+# GENESIS_DATE_STR = "Jul-22-2021 12:48:34 PM"
+GENESIS_DATE_STR = "2021-07-22"
+GENESIS_DATETIME = datetime(2021, 7, 22, 12, 48, 34)
+GENESIS_TIMESTAMP = int(GENESIS_DATETIME.timestamp())
+GENESIS_BLOCK = 12876278
 
 # Load raw data
 DATA_DIR = "./data"
 PRDP = PUDGY_RAW_DATA_PATH = os.path.join(DATA_DIR, "pudgypenguins_data_raw")
-PDF = PUDGY_RAW_DF = jload(PUDGY_RAW_DATA_PATH)
+PUDGY_RAW_DATA = jload(PUDGY_RAW_DATA_PATH)
 
 # One hot data
 PUDGY_ONEHOT_PATH = os.path.join(DATA_DIR, "pudgy_onehot.npz")
 POH = PUDGY_ONEHOT = loadz(PUDGY_ONEHOT_PATH)
 
-# Rarity data
-ADF = ALL_RARITY_DF = unpickle(os.path.join(DATA_DIR, "all_rarity_df.pickle"))
-PUDGY_RARITY_PATH = os.path.join(DATA_DIR, "pudgypenguins.xlsx")
+# ADF = ALL_RARITY_DF = unpickle(os.path.join(DATA_DIR, "all_rarity_df.pickle"))
+PUDGY_RARITY_PATH = os.path.join(DATA_DIR, "pudgypenguins2.xlsx")
 RDF = PUDGY_RARITY_DF = pd.read_excel(PUDGY_RARITY_PATH)
-
-# Transaction data (Pandas DataFrame)
-ADF = pd.read_pickle(os.path.join(DATA_DIR, 'pudgy-first-10000-txs'))
 
 ETH_HIST = pd.read_csv(os.path.join(DATA_DIR, "ETH-USD-History.csv"))
 
-##############################################################
-path = os.path.join(DATA_DIR, 'pudgy-txs')
-files = list(
-    map(
-        lambda x: os.path.join(path, x), 
-        os.listdir(path)
+def get_rarity_data():
+    path = os.path.join(DATA_DIR, 'pudgy-txs')
+    files = list(
+        map(
+            lambda x: os.path.join(path, x), 
+            os.listdir(path)
+        )
     )
-)
-dfs = list(map(lambda x: pd.read_csv(x), files))
-df = reduce_df(dfs)
-del path, dfs, files
+    dfs = list(map(lambda x: pd.read_csv(x), files))
+    return reduce_df(dfs)
+
+pudgy_rarity_df = get_rarity_data()
 
 # Normalized ETH PRICE
-def get_eth_mint_price(timestamp):
-    unix_time = int(timestamp)
+def get_eth_price_at(unix_timestamp):
+    unix_time = int(unix_timestamp)
     mint_date = datetime.utcfromtimestamp(unix_time).strftime('%Y-%m-%d %H:%M:%S')
     dt = datetime.strptime(mint_date, '%Y-%m-%d %H:%M:%S')
-    ETH_MINT_PRICE = ETH_HIST.iloc[logical2idx(ETH_HIST['Date'] == mint_date[:-9])[0]]
+    return ETH_HIST.iloc[logical2idx(ETH_HIST['Date'] == mint_date[:-9])[0]]
 
-def get_eth_price_at(date):
-    """
-    Fetch etherum historical price on a specific day
-    date: str e.g. "07-22-2021" format("%Y%m%d%")
-    """
-    eth_date_str = datetime.utcfromtimestamp(unix_time).strftime('%Y-%m-%d %H:%M:%S')
-    eth_datetime = datetime.strptime(mint_date, '%Y-%m-%d %H:%M:%S')
-    ETH_HIST.iloc[logical2idx()]
+ETH_MINT_PRICE = get_eth_price_at(GENESIS_TIMESTAMP)['Close']
