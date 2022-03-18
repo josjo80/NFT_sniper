@@ -14,6 +14,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from datetime import datetime
 from functools import reduce
+from dateutil.parser import parse
 
 matplotlib.use('agg')
 getwd = os.getcwd
@@ -126,6 +127,7 @@ from .contract_data import *
 # Set constants
 ETHERSCAN_API_KEY = "QXN3NDNXICBFTB1TEHZVZB6EYSXBZMUIP9"
 CONTRACT_ADDRESS  = "0xbd3531da5cf5857e7cfaa92426877b022e612cf8" # PudgyPenguins
+MAX_TOKENS = 8888
 # GENESIS_DATE_STR = "Jul-22-2021 12:48:34 PM"
 GENESIS_DATE_STR = "2021-07-22"
 GENESIS_DATETIME = datetime(2021, 7, 22, 12, 48, 34)
@@ -135,7 +137,8 @@ GENESIS_BLOCK = 12876278
 # Load raw data
 DATA_DIR = "./data"
 PRDP = PUDGY_RAW_DATA_PATH = os.path.join(DATA_DIR, "pudgypenguins_data_raw")
-PUDGY_RAW_DATA = jload(PUDGY_RAW_DATA_PATH)
+PRD = PUDGY_RAW_DATA = jload(PUDGY_RAW_DATA_PATH)
+penguins = pd.DataFrame.from_dict(PRD['pudgypenguins']['nfts'], orient='index')
 
 # One hot data
 PUDGY_ONEHOT_PATH = os.path.join(DATA_DIR, "pudgy_onehot.npz")
@@ -166,5 +169,11 @@ def get_eth_price_at(unix_timestamp):
     mint_date = datetime.utcfromtimestamp(unix_time).strftime('%Y-%m-%d %H:%M:%S')
     dt = datetime.strptime(mint_date, '%Y-%m-%d %H:%M:%S')
     return ETH_HIST.iloc[logical2idx(ETH_HIST['Date'] == mint_date[:-9])[0]]
+
+def str_datetime_to_unix(datetime_str):
+    return int(parse(datetime_str).timestamp())
+
+def get_eth_price_at_datetime_str(datetime_str):
+    return get_eth_price_at(str_datetime_to_unix(datetime_str))
 
 ETH_MINT_PRICE = get_eth_price_at(GENESIS_TIMESTAMP)['Close']
