@@ -199,5 +199,7 @@ for k, c in collection.categories.items():
     cat_offset += 2
 workbook.close()
 
+import pandas as pd
 # Read in
 df = pd.read_excel("./data/pudgypenguins.xlsx", engine='openpyxl')
+print(df)

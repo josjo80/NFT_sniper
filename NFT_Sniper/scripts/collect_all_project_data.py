@@ -7,6 +7,9 @@ from time import sleep
 from collections import defaultdict
 from utils import *
 
+#NEED:
+#  PRice
+
 
 PROJECT_NAMES = ['pudgypenguins', 
 'boredapeyachtclub', 'cryptopunks', 'mushrohms', 'world-of-women-nft']

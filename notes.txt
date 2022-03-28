@@ -24,3 +24,90 @@ Training Data will include:
 2a) Train the model and evaluate loop
 2b) Identify mispriced NFTs inside project by inferencing forward (time-series model?)
 3) Buy and Flip 'em.
+
+
+
+
+# CONVERSATION WITH JOSH 3/25
+Todo:
+One hot features
+Rarity score (reduced dimensionality explaning variance in price)
+Mint eth price 
+Eth price @ sale (normed)
+Engineered features between (0,1) (because of 1-hot)
+Concat rarity to one-hot encoded vector space
+
+Current sales sets list price of other houses in the market
+- Most recent floor price
+- Most recent ETH price
+- Last sale price with floor and eth price at that point in Time
+
+Rarity score = embed
+
+Wide input for model (match onehot+rarity)
+Regress current list price (predict)
+
+
+
+input: 
+One hot encoded space
+Rarity score
+Last time sold (historical sale data)
+last time sold collection floor price, # from rarity/opensea
+sale price of that NFT,
+eth price at sale time, 
+current day ETH price, 
+current day collection floor price
+
+pred: list price
+
+Retrain every day.
+
+
+Stringing past week of (collection floor price, normed eth price, etc)
+
+Past weeks list price (if have - opensea)
+
+Past weeks nft sales (train - val set)
+
+Don't have data for ( test set )
+
+MLS data.
+
+Also, not every asset has a list price. (not everything is up for sale)
+
+
+
+
+
+
+Filter out all nfts that have been sold in past, those have ground truth
+Work from current day backwards: 
+    [(price, sale today) , (price, sale going back 2-3 sales)] -> (predict: most recent sale)
+
+Hold-out test data (out of sample):
+- provide market conditions for day we're getting predictions for (X)
+- current price (Y)
+
+
+Daily updates:
+- auto pull
+
+SALES EVENT (new sample)
+
+
+Zero out vector space (if need be)
+
+-> use each sale event as a trigger to create a new sample for the same nft
+
+
+# Procedure TODOS
+# Build function to collect an individual PUDGY transactions (all sales/transfers)
+# Then perform analysis on each PUDGY to see if there are >=2 sales.
+#   if >=2 sales, add to train/val sets
+#   else, add to out-of-bounds set (hold-out-test)
+#
+
+# download blocks with sales for all nfts in collection
+# write block parser to get txns
+# 

@@ -17,23 +17,23 @@ def dict_up(l):
 def flatten_traits(d):
     return np.concatenate([list(v.keys()) for v in d.values()])
 
-def encode_traits(t, dtype='int32'):
+def encode_pudgy_traits(t, dtype='int32'):
     x = np.array(list(map(lambda x: TRAIT2IDX[x['value'].lower()], t)))
     y = np.zeros(N_TRAITS, dtype=dtype)
     for i in x:
         y[i] = 1
     return y
 
-def decode_traits(t):
+def decode_pudgy_traits(t):
     i = logical2idx(t.astype(bool))
     return TRAITS_LIST[i]
 
 def process_raw_pudgy_data(raw_data_path='./data/pudgypenguins_data_raw'):
     x = json.load(open(raw_data_path, 'r'))
     md = x['pudgypenguins']['project_metadata']['collection']
-    sts = md['stats']
+    stats = md['stats']
     nfts = x['pudgypenguins']['nfts']
-    a = asset_link = md['image_url']
+    asset_link = md['image_url']
     all_traits = md['traits']
 
     TRAITS = set(sorted(flatten_traits(all_traits)))
@@ -45,9 +45,9 @@ def process_raw_pudgy_data(raw_data_path='./data/pudgypenguins_data_raw'):
 
     #preallocate
     X = np.zeros((len(nfts), N_TRAITS))
-    for i, (nm, nft) in enumerate(nfts.items()):
-        X[i] = encode_traits(nft['attributes'])
+    for i, (_, nft) in enumerate(nfts.items()):
+        X[i] = encode_pudgy_traits(nft['attributes'])
 
     # save one hot vector
     with open('./data/pudgy_onehot.npz', 'wb') as f:
-        np.savez(f, X) # penguin indexed by range(0, 8887)
+        np.savez(f, X) 

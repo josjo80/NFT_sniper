@@ -6,13 +6,14 @@ import pandas as pd
 
 import pymongo
 from pymongo import MongoClient
+import requests 
 
 import matplotlib
 import matplotlib.pyplot as plt
 
 plt.style.use('ggplot')
 
-Setting up a MongoDB Connection
+#Setting up a MongoDB Connection
 
 client = MongoClient()
 db = client.meebitsDB

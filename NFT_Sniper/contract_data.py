@@ -61,11 +61,11 @@ def get_paginated_txs(page=1, offset=10):
             CONTRACT_ADDRESS, page, offset, ETHERSCAN_API_KEY)
     ).text)['result']
 
-def last_eth_price():
-    return json.loads(requests.get(
+def last_eth_price(key='ethusd'):
+    return float(json.loads(requests.get(
         "https://api.etherscan.io/api?module=stats&action=ethprice&apikey={}".format(
             ETHERSCAN_API_KEY)
-    ).text)['result']
+    ).text)['result'][key])
 
 def get_tx_by_hash(tx_hash):
     return json.loads(requests.get(
@@ -88,3 +88,35 @@ def get_block(block_no):
         block_no, ETHERSCAN_API_KEY)
     ).text)['result']
 
+def get_current_pudgy_stats():
+    url = "https://api.opensea.io/api/v1/collection/pudgypenguins/stats"
+    headers = {"Accept": "application/json"}
+    response = requests.request("GET", url, headers=headers)
+    return json.loads(response.text)['stats']
+
+def get_current_pudgy_floor_price():
+    x = get_current_pudgy_stats()
+    return x['floor_price']
+
+def get_average_pudgy_price():
+    x = get_current_pudgy_stats()
+    return x['average_price']
+
+
+def get_pudgy_sales():
+    url = "https://api.opensea.io/api/v1/collection/pudgypenguins?tab/=activity"
+    headers = {"Accept": "application/json"}
+    response = requests.request("GET", url, headers=headers)
+    return json.loads(response.text)['stats']
+
+# NEED API KEY
+def get_listings_for_asset(tokenID):
+    raise NotImplementedError
+    url = "https://api.opensea.io/api/v1/asset/{}/{}/listings?limit=20".format(
+        CONTRACT_ADDRESS, tokenID)
+    headers = {"Accept": "application/json"}
+    response = requests.request("GET", url, headers=headers)
+    return json.loads(response.text)
+
+
+# https://docs.cryptosheets.com/providers/opensea/retrieving-events/

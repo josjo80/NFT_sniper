@@ -4,6 +4,9 @@ import requests
 import math
 import time
 
+import pandas as pd
+from .utils import lengths
+
 CONTRACT_ADDRESS  = "0xbd3531da5cf5857e7cfaa92426877b022e612cf8" # PudgyPenguins
 MAX_TOKENS = 8888
 MORALIS_API_KEY = "xcJ9M9jsiM6mrllSMO3vYZTBzuz6ciat23RRRa4ESgVZ9p8AqW7kcD2TiHrmg5MB"
@@ -27,20 +30,27 @@ tokenID = 0
 nftTransfers = 'https://deep-index.moralis.io/api/v2/nft/{}/transfers?chain=eth&format=decimal'.format(tokenAddr)
 
 
-# pudgyTransfers = {}
-for tokenID in range(1501, MAX_TOKENS):
+pudgyTransfers = {}
+skipped = []
+for tokenID in range(MAX_TOKENS):
     url = 'https://deep-index.moralis.io/api/v2/nft/{}/{}/transfers?chain=eth&format=decimal'.format(
         tokenAddr, tokenID)
-    response = requests.request("GET", url, headers=headers)
-    
-    resp = response.json()
+    try:
+        response = requests.request("GET", url, headers=headers)
+        resp = response.json()
+    except:
+        print("Error with tokenID {}".format(tokenID))
+        skipped.append(tokenID)
     pudgyTransfers[tokenID] = resp['result']
     print("Got tokenID {}'s {} txns".format(tokenID, resp['total']))
-    time.sleep(0.5)
+    time.sleep(0.1)
 
+import pickle
+with open("./data/pudgy_transactions.pickle", 'wb') as f:
+    pickle.dump(pudgyTransfers, f)
 
-with open("./data/pudgy_transactions_1911.json", 'w') as f:
-    json.dump(pudgyTransfers, f)
+with open("./data/pudgy_transactions_skipped.pickle", 'wb') as f:
+    pickle.dump(skipped, f)
 
 # Process data
 for tokenID, txns in pudgyTransfers.items():
@@ -54,3 +64,5 @@ def calc_gwei_eth_price_at_sale(txn):
     ts = txn['block_timestamp']
     vl = txn['value']
     return get_eth_price_at_datetime_str(ts)['Close']
+
+
