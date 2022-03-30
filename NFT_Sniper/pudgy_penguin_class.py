@@ -1,12 +1,44 @@
 from __init__ import *
+from copy import deepcopy
+from pprint import pprint, pformat
 
+
+def encode_pudgy_traits(t, dtype='int32'):
+    x = np.array(list(map(lambda x: TRAIT2IDX[x['value'].lower()], t)))
+    y = np.zeros(N_TRAITS, dtype=dtype)
+    for i in x:
+        y[i] = 1
+    return y
+
+def decode_pudgy_traits(t):
+    return TRAITS_LIST[t.astype(bool)]
+
+DROP_COLS = [
+ 'block_number',
+ 'block_timestamp',
+ 'block_hash',
+ 'transaction_hash',
+ 'transaction_index',
+ 'log_index',
+ 'value',
+ 'contract_type',
+ 'transaction_type',
+ 'token_address',
+ 'token_id',
+ 'from_address',
+ 'to_address',
+ 'amount',
+ 'verified',
+ 'operator'
+]
 
 class PudgyPenguin:
     def __init__(self, 
                  tokenID, 
                  events=None, 
                  one_hot_features=None, 
-                 one_hot_path=PUDGY_ONEHOT_PATH, 
+                 string_features=None,
+                 one_hot_path=PUDGY_ONEHOT_PATH,
                  rarity_score=None, 
                  rarity_score_norm=None,
                  rarity_freq=None,
@@ -18,6 +50,7 @@ class PudgyPenguin:
         self.events = events # sales
         self.one_hot_path = one_hot_path
         self.one_hot_features = one_hot_features
+        self.string_features = string_features
         self.rarity_score = rarity_score
         self.rairty_score_norm = rarity_score_norm
         self.rarity_freq = rarity_freq
@@ -37,11 +70,27 @@ class PudgyPenguin:
         self.set_rarity_score()
         self.set_sale_data()
 
+    def __str__(self):
+        dct = deepcopy(self.__dict__)
+        dct.pop('image_data')
+        dct['one_hot_features']
+        string = pformat(dct)
+        return string
+
+    def set_str_features(self):
+        if not self.one_hot_features:
+            self.set_one_hot_features()
+        self.string_features = decode_pudgy_traits(self.one_hot_features)
+
     def set_sale_data(self):
         if self.events: return True
         events_series = load_pudgy_txns(self.tokenID)
         events_dict = invert_list_of_dict(events_series)
-        self.events = pd.DataFrame(events_dict) # sets a pandas DataFrame
+        events = pd.DataFrame(events_dict) 
+        events.loc[:, "ETH_price_at_sale"] = events['block_timestamp'].apply(get_eth_price_at_datetime_str)
+        events.loc[:, "sale_price_ETH"] = events['value'].apply(wei_to_eth)
+        events.loc[:, "sale_price_USD"] = events['sale_price_ETH'] * events['ETH_price_at_sale']
+        self.events = events
 
     def set_current_floor_price(self):
         self.current_floor_price_ETH = float(get_current_pudgy_floor_price())
@@ -76,6 +125,10 @@ class PudgyPenguin:
         self.rairty_score_norm = rare_series['Rarity score normed']
         self.rarity_freq = rarity_freq
 
+    def return_all_data(self):
+        raise NotImplementedError
+
+
 
 class PudgyEvent:
     def __init__(self, tokenID, sale_data):
@@ -86,4 +139,6 @@ class PudgyEvent:
 
 
 if False:
-    pp=PudgyPenguin(888)
+    penguins = {}
+    for tokenID in range(10):
+        penguins[tokenID]=PudgyPenguin(tokenID)

@@ -207,12 +207,15 @@ def get_eth_price_at(unix_timestamp):
 def str_datetime_to_unix(datetime_str):
     return int(parse(datetime_str).timestamp())
 
-def get_eth_price_at_datetime_str(datetime_str):
-    return get_eth_price_at(str_datetime_to_unix(datetime_str))
+def get_eth_price_at_datetime_str(datetime_str, return_single_value=True):
+    x = get_eth_price_at(str_datetime_to_unix(datetime_str))
+    return x['Close'] if return_single_value else x
+
+eth_to_usd = lambda eth, ds: float(eth) * get_eth_price_at_datetime_str(ds)
 
 PUDGY_TXN_DF = load_txn_data()
 ETH_MINT_PRICE = get_eth_price_at(GENESIS_TIMESTAMP)['Close']
-
+GENESIS_PRICE_USD = ETH_MINT_PRICE
 
 def load_pudgy_txn_df():
     with open("./data/pudgy_transactions.pickle", 'rb') as f:

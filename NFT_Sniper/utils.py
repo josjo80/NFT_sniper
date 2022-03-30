@@ -9,6 +9,8 @@ from io import BytesIO
 from functools import reduce
 
 # Useful Lambas
+gwei_to_eth = lambda gwei:  int(gwei) / 1e9
+wei_to_eth = lambda wei:  int(wei) / 1e18
 remove = lambda s, rm: s.translate({ord(i): None for i in rm}) # string removal
 reduce_df = lambda dfs: reduce(lambda df1, df2: df1.merge(df2, how='outer'), dfs)
 get = lambda url: requests.request("GET", url)

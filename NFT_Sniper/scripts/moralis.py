@@ -16,6 +16,12 @@ headers = {
 }
 
 gwei_to_eth = lambda gwei:  gwei / 1e9
+wei_to_eth = lambda wei:  wei / 1e18
+
+def calc_gwei_eth_price_at_sale(txn):
+    ts = txn['block_timestamp']
+    vl = txn['value']
+    return get_eth_price_at_datetime_str(ts)['Close']
 
 # add blockchain connection info
 chain = "eth"
@@ -60,9 +66,6 @@ for tokenID, txns in pudgyTransfers.items():
     # DO WE NEED OPENSEA TO GET LISTINGS TOO?!?! THIS SEEMS POINTLESS
     break
 
-def calc_gwei_eth_price_at_sale(txn):
-    ts = txn['block_timestamp']
-    vl = txn['value']
-    return get_eth_price_at_datetime_str(ts)['Close']
+
 
 
