@@ -100,3 +100,18 @@ def dict_up(l):
 
 def flatten_traits(d):
     return np.concatenate([list(v.keys()) for v in d.values()])
+
+def sigmoid2(z):
+    """ this function implements the sigmoid function, and 
+        expects a numpy array as argument
+    """
+    if not isinstance(z, np.ndarray):
+        z = np.asarray(z)    
+    sigmoid = 1.0/(1.0 + np.exp(-z))
+    return sigmoid 
+
+def sigmoid(z):
+    return 1/(1 + np.exp(-z))
+
+def negate(x):
+    return ~np.asarray(x).astype(bool)

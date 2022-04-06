@@ -257,3 +257,8 @@ def invert_list_of_dict(list_of_dicts):
         for k,v in d.items():
             out[k].append(v)
     return out
+
+
+EMBEDDING_DIM = 64
+from .embeddings import get_pudgy_embeddings
+PUDGY_EMBEDDING = get_pudgy_embeddings(POH, EMBEDDING_DIM)

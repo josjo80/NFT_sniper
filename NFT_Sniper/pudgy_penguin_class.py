@@ -1,4 +1,6 @@
-from __init__ import *
+from lib2to3.pgen2 import token
+from NFT_Sniper.__init__ import *
+from NFT_Sniper.embeddings import get_pudgy_embeddings
 from copy import deepcopy
 from pprint import pprint, pformat
 
@@ -52,7 +54,7 @@ class PudgyPenguin:
         self.one_hot_features = one_hot_features
         self.string_features = string_features
         self.rarity_score = rarity_score
-        self.rairty_score_norm = rarity_score_norm
+        self.rarity_score_norm = rarity_score_norm
         self.rarity_freq = rarity_freq
         self.image_data = image_data
         self.current_floor_price_ETH = current_floor_price_ETH
@@ -75,7 +77,11 @@ class PudgyPenguin:
         dct.pop('image_data')
         dct['one_hot_features']
         string = pformat(dct)
-        return string
+        print(string)
+        return "" #string
+    
+    def __repr__(self):
+        return self.__str__()
 
     def set_str_features(self):
         if not self.one_hot_features:
@@ -87,9 +93,11 @@ class PudgyPenguin:
         events_series = load_pudgy_txns(self.tokenID)
         events_dict = invert_list_of_dict(events_series)
         events = pd.DataFrame(events_dict) 
-        events.loc[:, "ETH_price_at_sale"] = events['block_timestamp'].apply(get_eth_price_at_datetime_str)
+        events.loc[:, "ETH_price_at_sale"] = events['block_timestamp'].apply(
+            get_eth_price_at_datetime_str)
         events.loc[:, "sale_price_ETH"] = events['value'].apply(wei_to_eth)
-        events.loc[:, "sale_price_USD"] = events['sale_price_ETH'] * events['ETH_price_at_sale']
+        events.loc[:, "sale_price_USD"] = events['sale_price_ETH'] * \
+            events['ETH_price_at_sale']
         self.events = events
 
     def set_current_floor_price(self):
@@ -122,12 +130,11 @@ class PudgyPenguin:
             rare_series['Freq. (%).5']
         ])
         self.rarity_score = rare_series['Rarity score']
-        self.rairty_score_norm = rare_series['Rarity score normed']
+        self.rarity_score_norm = rare_series['Rarity score normed']
         self.rarity_freq = rarity_freq
 
     def return_all_data(self):
         raise NotImplementedError
-
 
 
 class PudgyEvent:
@@ -136,9 +143,43 @@ class PudgyEvent:
         self.penguin_object = PudgyPenguin(tokenID)
         self.sale_data = sale_data
 
-
+# TODO: how to:
+# STANDARDIZE VALUES 
+# NORMALIZE VALUES
 
 if False:
     penguins = {}
-    for tokenID in range(10):
-        penguins[tokenID]=PudgyPenguin(tokenID)
+    train = {}
+    test  = {}
+    for tokenID in range(15):
+        p = PudgyPenguin(tokenID)
+
+        penguins[tokenID] = p
+
+        if len(p.events) >= 2:
+            train[tokenID] = p
+        else:
+            test[tokenID] = p
+
+
+
+# WIP
+def training_data(penguin, embedding_dim=64):
+    p = penguin
+    e = p.events
+
+    # Remove events with no cost (transfers)
+    ev = e[e['sale_price_ETH'] > 0][['sale_price_ETH', 'sale_price_USD']]
+
+    # 165D
+    oh = p.one_hot_features
+
+    # 5D
+    rf = p.rarity_freq
+
+    # Scalars
+    rs = p.rarity_score
+    rn = p.rarity_score_norm
+
+    # Compute embeddings for this specific ID of one_hot features
+    emb = PUDGY_EMBEDDING[:, p.tokenID]
