@@ -111,3 +111,8 @@ Zero out vector space (if need be)
 # download blocks with sales for all nfts in collection
 # write block parser to get txns
 # 
+
+
+# TODO: 
+# Create an update function to pull daily new transfer data and ADD to database
+# Ordered dict?

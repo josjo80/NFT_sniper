@@ -1,11 +1,23 @@
 from web3 import Web3
-import json
 import requests
-import math
-import time
+import pickle
 
-import pandas as pd
-from .utils import lengths
+import time
+timestamp = lambda: time.strftime("%Y%m%d-%H%M%S")
+
+from ..__init__ import get_eth_price_at_datetime_str
+
+
+def lengths(x):
+    def maybe_len(e):
+        if type(e) == list:
+            return len(e)
+        else:
+            return 1
+    if type(x) is not list: return [1]
+    if len(x) == 1: return [1]
+    return(list(map(maybe_len, x)))
+
 
 CONTRACT_ADDRESS  = "0xbd3531da5cf5857e7cfaa92426877b022e612cf8" # PudgyPenguins
 MAX_TOKENS = 8888
@@ -51,8 +63,9 @@ for tokenID in range(MAX_TOKENS):
     print("Got tokenID {}'s {} txns".format(tokenID, resp['total']))
     time.sleep(0.1)
 
-import pickle
-with open("./data/pudgy_transactions.pickle", 'wb') as f:
+completed_time = timestamp()
+
+with open("./data/pudgy_transactions_{}.pickle".format(timestamp()), 'wb') as f:
     pickle.dump(pudgyTransfers, f)
 
 with open("./data/pudgy_transactions_skipped.pickle", 'wb') as f:

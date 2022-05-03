@@ -147,11 +147,11 @@ class PudgyEvent:
 # STANDARDIZE VALUES 
 # NORMALIZE VALUES
 
-if False:
+if True:
     penguins = {}
     train = {}
     test  = {}
-    for tokenID in range(15):
+    for tokenID in range(9,15):
         p = PudgyPenguin(tokenID)
 
         penguins[tokenID] = p

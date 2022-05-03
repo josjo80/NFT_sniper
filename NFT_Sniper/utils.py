@@ -18,6 +18,18 @@ jtext = lambda url: json.loads(requests.request("GET", url).text)
 maybe_unlist = lambda x: x[0] if len(x) == 1 else x
 # keys_to_global_nms = lambda d: [globals().update(k, v) for k, v in d.items()]
 
+def dict_append_all(d1, d2):
+    assert sorted(list(d1)) == sorted(list(d2)) # keys MUST match
+    assert isinstance(list(d1.values())[0], list)
+    assert isinstance(list(d2.values())[0], list)
+    d3 = {}
+    for k, v1 in d1.items():
+        v2 = d2[k]
+        d3[k] = v1
+        d3[k].extend(v2)
+    del d1, d2
+    return d3
+
 # Creates an empty dict with the specified type as a default value
 def typedict(keys=None, dtype=int):
     d = dict.fromkeys(keys)
